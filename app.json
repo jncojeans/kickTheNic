@@ -16,8 +16,11 @@
       "infoPlist": {
         "UIBackgroundModes": [
           "fetch",
+          "remote-notification",
+          "fetch",
           "remote-notification"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -26,7 +29,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#1a1a1a"
-      }
+      },
+      "permissions": [
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.WAKE_LOCK"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -54,9 +61,12 @@
     },
     "extra": {
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "b93fefea-74e5-4445-8a74-d19a703ec615"
+      },
+      "router": {
+        "origin": false
       }
     },
-    "owner": "your-expo-username"
+    "owner": "jncojeans"
   }
 }
