@@ -25,6 +25,16 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "standalone": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": false,
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_USE_METRO_WORKSPACE_ROOT": "1"
+      }
     }
   },
   "submit": {
@@ -32,7 +42,7 @@
       "ios": {
         "appleId": "kevsjolinsched@gmail.com",
         "ascAppId": "your-app-store-connect-app-id",
-        "appleTeamId": "your-apple-team-id"
+        "appleTeamId": "KKUW8X6QXT"
       }
     }
   }
