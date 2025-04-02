@@ -24,13 +24,17 @@
       }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "ios": {
+        "resourceClass": "m-medium"
+      }
     },
-    "standalone": {
-      "distribution": "internal",
+    "standalone-ios": {
+      "distribution": "store",
       "ios": {
         "simulator": false,
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "buildConfiguration": "Release"
       },
       "env": {
         "EXPO_USE_METRO_WORKSPACE_ROOT": "1"
@@ -41,7 +45,7 @@
     "production": {
       "ios": {
         "appleId": "kevsjolinsched@gmail.com",
-        "ascAppId": "your-app-store-connect-app-id",
+        "ascAppId": "6475963217",
         "appleTeamId": "KKUW8X6QXT"
       }
     }
