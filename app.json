@@ -7,12 +7,13 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "backgroundColor": "#1a1a1a",
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.kickthenic.app",
-      "buildNumber": "1",
+      "buildNumber": "3",
       "infoPlist": {
         "UIBackgroundModes": [
           "fetch",

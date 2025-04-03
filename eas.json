@@ -34,10 +34,16 @@
       "ios": {
         "simulator": false,
         "resourceClass": "m-medium",
-        "buildConfiguration": "Release"
+        "buildConfiguration": "Release",
+        "image": "latest"
       },
       "env": {
-        "EXPO_USE_METRO_WORKSPACE_ROOT": "1"
+        "EXPO_USE_METRO_WORKSPACE_ROOT": "1",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqcXFmd3ZiaXpnb293Y2h2enVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4Njk5MDgsImV4cCI6MjA1ODQ0NTkwOH0.PiH-TJDHNo_3Z4wL1-wCvuEaayDlNoD_BV7NvafvTjE",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://tjqqfwvbizgoowchvzun.supabase.co"
+      },
+      "cache": {
+        "key": "eas-build-ios-cache-v1"
       }
     }
   },
