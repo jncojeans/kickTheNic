@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { useFonts, Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter';
-import { CircularProgress } from '@/components/CircularProgress';
-import { GlassContainer } from '@/components/GlassContainer';
+import { HorizontalProgress } from '@/components/HorizontalProgress';
 import { Timer, Pause, Play, CircleStop as StopCircle } from 'lucide-react-native';
 import { Platform } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
@@ -73,6 +72,8 @@ Notifications.setNotificationHandler({
 export default function Dashboard() {
   const [duration, setDuration] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
+  const [pouchCount, setPouchCount] = useState(0);
+  const [targetPouches, setTargetPouches] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [currentPouchId, setCurrentPouchId] = useState<string | null>(null);
@@ -128,7 +129,7 @@ export default function Dashboard() {
 
       const { data: habits, error: habitsError } = await supabase
         .from('current_habits')
-        .select('duration_per_pouch')
+        .select('duration_per_pouch, pouches_per_day')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -140,6 +141,22 @@ export default function Dashboard() {
       const durationInSeconds = habits.duration_per_pouch * 60;
       setDuration(durationInSeconds);
       setRemainingTime(durationInSeconds);
+      setTargetPouches(habits.pouches_per_day);
+
+      // Fetch today's pouch count
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const { data: pouches, error: pouchesError } = await supabase
+        .from('pouches')
+        .select('id')
+        .eq('user_id', user.id)
+        .gte('start_time', today.toISOString())
+        .lt('start_time', new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString());
+
+      if (pouchesError) throw pouchesError;
+      setPouchCount(pouches?.length || 0);
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -228,6 +245,7 @@ export default function Dashboard() {
       if (!pouch) throw new Error('Failed to create pouch');
 
       setCurrentPouchId(pouch.id);
+      setPouchCount(prev => prev + 1);
     } catch (err) {
       handleError(err as Error | PostgrestError);
       return;
@@ -318,79 +336,62 @@ export default function Dashboard() {
   const progress = remainingTime / duration;
 
   return (
-    <ImageBackground
-      source={{ uri: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=3270&auto=format&fit=crop' }}
-      style={styles.background}
-    >
-      <View style={styles.overlay} />
+    <View style={styles.background}>
       <View style={styles.container}>
-        <GlassContainer style={styles.contentContainer}>
+        <View style={styles.contentContainer}>
           {error ? (
             <Text style={styles.errorText}>{error}</Text>
           ) : loading ? (
             <Text style={styles.loadingText}>Loading...</Text>
           ) : (
             <>
-              <Text style={styles.title}>Current Pouch</Text>
-              <View style={styles.timerContainer}>
-                <CircularProgress
-                  size={300}
-                  strokeWidth={20}
-                  progress={progress}
-                  duration={duration}
-                  remainingTime={remainingTime}
-                />
+              <Text style={styles.title}>Pouch Tracker</Text>
+              <View style={styles.pouchCountContainer}>
+                <Text style={styles.pouchCountText}>Today's Pouches</Text>
+                <Text style={styles.pouchCount}>{pouchCount} / {targetPouches}</Text>
+                <View style={styles.progressBarContainer}>
+                  <View style={[styles.progressBar, { width: `${(pouchCount / targetPouches) * 100}%` }]} />
+                </View>
               </View>
-              <View style={styles.buttonContainer}>
-                {!isActive ? (
-                  <TouchableOpacity
+              {!isActive ? (
+                <View style={styles.buttonContainer}>
+                  <Pressable
                     style={styles.mainButton}
                     onPress={handleStart}
                   >
-                    <Timer size={24} color="#fff" />
-                    <Text style={styles.mainButtonText}>New Pouch</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <View style={styles.activeButtonsContainer}>
-                    {isPaused ? (
-                      <TouchableOpacity
-                        style={[styles.controlButton, styles.resumeButton]}
-                        onPress={handleResume}
-                      >
-                        <Play size={24} color="#fff" />
-                      </TouchableOpacity>
-                    ) : (
-                      <TouchableOpacity
-                        style={[styles.controlButton, styles.pauseButton]}
-                        onPress={handlePause}
-                      >
-                        <Pause size={24} color="#fff" />
-                      </TouchableOpacity>
-                    )}
-                    <TouchableOpacity
-                      style={[styles.controlButton, styles.stopButton]}
-                      onPress={handleStop}
-                    >
-                      <StopCircle size={24} color="#fff" />
-                    </TouchableOpacity>
+                    <Text style={styles.mainButtonText}>Start New Pouch</Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <View style={styles.currentPouchContainer}>
+                  <Text style={styles.currentPouchTitle}>Current Pouch</Text>
+                  <View style={styles.timerContainer}>
+                    <HorizontalProgress
+                      progress={progress}
+                      duration={duration}
+                      remainingTime={remainingTime}
+                    />
                   </View>
-                )}
-              </View>
+                  <Pressable
+                    style={styles.finishEarlyButton}
+                    onPress={handleStop}
+                  >
+                    <Text style={styles.finishEarlyText}>Finish Early</Text>
+                  </Pressable>
+                </View>
+              )}
             </>
           )}
-        </GlassContainer>
+        </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: '#F0F0F3',
   },
   container: {
     flex: 1,
@@ -402,13 +403,71 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     alignSelf: 'center',
     alignItems: 'center',
+    backgroundColor: '#F0F0F3',
+    borderRadius: 30,
+    padding: 20,
   },
   title: {
     fontSize: 32,
-    color: '#fff',
+    color: '#666',
     textAlign: 'center',
     fontFamily: 'Inter-SemiBold',
     marginBottom: 32,
+  },
+  pouchCountContainer: {
+    width: '100%',
+    backgroundColor: '#F0F0F3',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 10, height: 10 },
+        shadowOpacity: 0.25,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: '10px 10px 20px #D1D9E6, -10px -10px 20px #FFFFFF',
+      }
+    }),
+  },
+  progressBarContainer: {
+    width: '100%',
+    height: 4,
+    backgroundColor: '#E0E0E3',
+    borderRadius: 2,
+    marginTop: 12,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#00A3A3',
+    borderRadius: 2,
+  },
+  pouchCountText: {
+    fontSize: 18,
+    color: '#666',
+    fontFamily: 'Inter-Regular',
+  },
+  pouchCount: {
+    fontSize: 24,
+    color: '#666',
+    fontFamily: 'Inter-SemiBold',
+    marginTop: 8,
+  },
+  currentPouchContainer: {
+    width: '100%',
+    marginTop: 20,
+  },
+  currentPouchTitle: {
+    fontSize: 24,
+    color: '#666',
+    fontFamily: 'Inter-SemiBold',
+    marginBottom: 16,
   },
   timerContainer: {
     marginBottom: 32,
@@ -417,39 +476,56 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   mainButton: {
-    backgroundColor: '#4F46E5',
-    flexDirection: 'row',
+    backgroundColor: '#F0F0F3',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 20,
     gap: 8,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 10, height: 10 },
+        shadowOpacity: 0.25,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: '10px 10px 20px #D1D9E6, -10px -10px 20px #FFFFFF',
+      }
+    }),
   },
   mainButtonText: {
-    color: '#fff',
+    color: '#00A3A3',
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
   },
-  activeButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 16,
-  },
-  controlButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+  finishEarlyButton: {
+    backgroundColor: '#F0F0F3',
+    padding: 16,
+    borderRadius: 12,
     alignItems: 'center',
-    justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#ef4444',
+        shadowOffset: { width: 10, height: 10 },
+        shadowOpacity: 0.25,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: '10px 10px 20px #D1D9E6, -10px -10px 20px #FFFFFF',
+      }
+    }),
   },
-  pauseButton: {
-    backgroundColor: '#4F46E5',
-  },
-  resumeButton: {
-    backgroundColor: '#059669',
-  },
-  stopButton: {
-    backgroundColor: '#DC2626',
+  finishEarlyText: {
+    color: '#ef4444',
+    fontSize: 16,
+    fontFamily: 'Inter-SemiBold',
   },
   errorText: {
     color: '#ef4444',
@@ -458,7 +534,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
   },
   loadingText: {
-    color: '#fff',
+    color: '#666',
     textAlign: 'center',
     fontFamily: 'Inter-Regular',
   },

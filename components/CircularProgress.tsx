@@ -31,7 +31,7 @@ export function CircularProgress({
       <Svg width={size} height={size}>
         {/* Background circle */}
         <Circle
-          stroke="#2a2a2a"
+          stroke="#E0E0E3"
           fill="none"
           cx={size / 2}
           cy={size / 2}
@@ -40,7 +40,7 @@ export function CircularProgress({
         />
         {/* Progress circle */}
         <Circle
-          stroke="#4F46E5"
+          stroke="#00A3A3"
           fill="none"
           cx={size / 2}
           cy={size / 2}
@@ -76,12 +76,12 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 48,
     fontFamily: 'Inter-SemiBold',
-    color: '#fff',
+    color: '#666',
   },
   durationText: {
     fontSize: 16,
     fontFamily: 'Inter-Regular',
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: '#999',
     marginTop: 8,
   },
 });

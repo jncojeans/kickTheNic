@@ -13,46 +13,16 @@
         "simulator": true
       }
     },
-    "preview-device": {
-      "extends": "preview",
-      "distribution": "internal",
-      "ios": {
-        "simulator": false
-      },
-      "android": {
-        "buildType": "apk"
-      }
-    },
     "production": {
-      "autoIncrement": true,
-      "ios": {
-        "resourceClass": "m-medium"
-      }
-    },
-    "standalone-ios": {
-      "distribution": "store",
-      "ios": {
-        "simulator": false,
-        "resourceClass": "m-medium",
-        "buildConfiguration": "Release",
-        "image": "latest"
-      },
-      "env": {
-        "EXPO_USE_METRO_WORKSPACE_ROOT": "1",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqcXFmd3ZiaXpnb293Y2h2enVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4Njk5MDgsImV4cCI6MjA1ODQ0NTkwOH0.PiH-TJDHNo_3Z4wL1-wCvuEaayDlNoD_BV7NvafvTjE",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://tjqqfwvbizgoowchvzun.supabase.co"
-      },
-      "cache": {
-        "key": "eas-build-ios-cache-v1"
-      }
+      "autoIncrement": true
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "appleId": "kevsjolinsched@gmail.com",
-        "ascAppId": "6475963217",
-        "appleTeamId": "KKUW8X6QXT"
+        "appleId": "your-apple-id@example.com",
+        "ascAppId": "your-app-store-connect-app-id",
+        "appleTeamId": "your-apple-team-id"
       }
     }
   }

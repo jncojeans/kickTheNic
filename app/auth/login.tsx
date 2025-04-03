@@ -37,36 +37,19 @@ export default function Login() {
       setLoading(true);
       setError(null);
       
-      console.log('Attempting login with email:', email);
-      
       const { data: { user }, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) {
-        console.error('Supabase auth error:', error);
-        throw error;
-      }
-      if (!user) {
-        console.error('No user returned from auth');
-        throw new Error('User not found');
-      }
+      if (error) throw error;
+      if (!user) throw new Error('User not found');
 
-      console.log('Successfully authenticated user:', user.id);
-
-      const { data: profile, error: profileError } = await supabase
+      const { data: profile } = await supabase
         .from('profiles')
         .select('has_completed_goal, has_completed_habits, has_completed_preferences')
         .eq('id', user.id)
         .single();
-
-      if (profileError) {
-        console.error('Error fetching profile:', profileError);
-        throw profileError;
-      }
-
-      console.log('Successfully fetched profile:', profile);
 
       if (!profile?.has_completed_goal) {
         router.replace('/onboarding/goal');
@@ -78,17 +61,10 @@ export default function Login() {
         router.replace('/(tabs)');
       }
     } catch (err) {
-      console.error('Login error:', err);
-      if (err instanceof Error) {
-        if (err.message === 'Invalid login credentials') {
-          setError('Invalid email or password');
-        } else if (err.message.includes('network')) {
-          setError('Network connection error. Please check your internet connection and try again.');
-        } else {
-          setError(err.message);
-        }
+      if (err instanceof Error && err.message === 'Invalid login credentials') {
+        setError('Invalid email or password');
       } else {
-        setError('An unexpected error occurred. Please try again.');
+        setError(err instanceof Error ? err.message : 'An error occurred');
       }
     } finally {
       setLoading(false);

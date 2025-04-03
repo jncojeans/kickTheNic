@@ -7,26 +7,18 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "backgroundColor": "#1a1a1a",
-    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.kickthenic.app",
-      "buildNumber": "3",
+      "buildNumber": "2",
       "infoPlist": {
         "UIBackgroundModes": [
           "fetch",
           "remote-notification"
-        ],
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSUserTrackingUsageDescription": "This app does not track you across apps and websites."
-      },
-      "appStoreUrl": "https://apps.apple.com/app/kick-the-nic/id6475963217",
-      "config": {
-        "usesNonExemptEncryption": false
-      },
-      "requireFullScreen": true
+        ]
+      }
     },
     "android": {
       "package": "com.kickthenic.app",
@@ -34,11 +26,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#1a1a1a"
-      },
-      "permissions": [
-        "android.permission.RECEIVE_BOOT_COMPLETED",
-        "android.permission.WAKE_LOCK"
-      ]
+      }
     },
     "web": {
       "bundler": "metro",
@@ -66,20 +54,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "b93fefea-74e5-4445-8a74-d19a703ec615"
-      },
-      "router": {
-        "origin": false
+        "projectId": "your-project-id"
       }
     },
-    "owner": "jncojeans",
-    "privacy": "unlisted",
-    "description": "An app to help you quit nicotine addiction",
-    "githubUrl": "https://github.com/jncojeans/kickTheNic",
-    "splash": {
-      "image": "./assets/images/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#1a1a1a"
-    }
+    "owner": "your-expo-username"
   }
 }
